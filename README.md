@@ -1,4 +1,4 @@
-# balansami
+# balansmi
 
 Osnovni Next.js projekat sa JavaScript-om i SCSS-om.
 
