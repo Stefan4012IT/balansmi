@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const navigationItems = [
+  { label: "About", href: "#about" },
+  { label: "Approach", href: "#approach" },
+  { label: "Sessions", href: "#sessions" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Book a session", href: "#contact", cta: true },
+];
 
 const focusAreas = [
   {
@@ -63,30 +71,49 @@ export default function Home() {
 
   const closeMenu = () => setMenuOpen(false);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const mobileViewport = window.matchMedia("(max-width: 900px)");
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    const handleViewportChange = () => {
+      if (!mobileViewport.matches) setMenuOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    mobileViewport.addEventListener("change", handleViewportChange);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+      mobileViewport.removeEventListener("change", handleViewportChange);
+    };
+  }, [menuOpen]);
+
   return (
     <main className="site-page">
       <header className="site-header">
-        <Link className="brand" href="/" aria-label="Balansmi home">
+        <Link className="brand" href="/" aria-label="Balansmi home" onClick={closeMenu}>
           balansmi
         </Link>
 
-        <nav
-          id="site-nav"
-          className={`site-nav${menuOpen ? " is-open" : ""}`}
-          aria-label="Main navigation"
-        >
-          <a href="#about" onClick={closeMenu}>About</a>
-          <a href="#approach" onClick={closeMenu}>Approach</a>
-          <a href="#sessions" onClick={closeMenu}>Sessions</a>
-          <a href="#faq" onClick={closeMenu}>FAQ</a>
-          <a className="nav-cta" href="#contact" onClick={closeMenu}>Book a session</a>
+        <nav className="site-nav" aria-label="Main navigation">
+          {navigationItems.map((item) => (
+            <a className={item.cta ? "nav-cta" : undefined} href={item.href} key={item.href}>
+              {item.label}
+            </a>
+          ))}
         </nav>
 
         <button
-          className="header-action"
+          className={`header-action${menuOpen ? " is-open" : ""}`}
           type="button"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-controls="site-nav"
+          aria-controls="mobile-nav"
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((isOpen) => !isOpen)}
         >
@@ -94,6 +121,25 @@ export default function Home() {
           <span />
         </button>
       </header>
+
+      <nav
+        id="mobile-nav"
+        className={`mobile-nav${menuOpen ? " is-open" : ""}`}
+        aria-label="Mobile navigation"
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
+      >
+        <p className="eyebrow mobile-nav__eyebrow">Navigate</p>
+        <div className="mobile-nav__links">
+          {navigationItems.map((item, index) => (
+            <a href={item.href} key={item.href} onClick={closeMenu}>
+              <span className="mobile-nav__number">0{index + 1}</span>
+              <span>{item.label}</span>
+            </a>
+          ))}
+        </div>
+        <p className="mobile-nav__footer">Private · Professional · At your own pace</p>
+      </nav>
 
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero__content">
@@ -123,7 +169,15 @@ export default function Home() {
       </section>
 
       <section className="intro-statement section" id="about" aria-labelledby="intro-title">
-        <div className="section-label">About the practice</div>
+        <div className="intro-statement__aside">
+          <p className="eyebrow">About the practice</p>
+          <svg className="intro-statement__pause-mark" viewBox="0 0 176 176" fill="none" aria-hidden="true">
+            <circle cx="88" cy="88" r="86" stroke="currentColor" strokeOpacity="0.28" />
+            <circle cx="88" cy="88" r="58" stroke="currentColor" strokeOpacity="0.48" />
+            <circle cx="88" cy="88" r="30" stroke="currentColor" strokeOpacity="0.72" />
+            <circle cx="88" cy="88" r="3" fill="currentColor" />
+          </svg>
+        </div>
         <div className="intro-statement__content">
           <h2 id="intro-title">You don&apos;t need to have everything figured out before you start talking.</h2>
           <div className="intro-statement__copy">
@@ -146,7 +200,7 @@ export default function Home() {
           <div className="about__visual-caption">private practice / online</div>
         </div>
         <div className="about__content">
-          <div className="section-label">About me</div>
+          <p className="eyebrow">About me</p>
           <h2 id="about-title">A thoughtful, human approach to psychological support.</h2>
           <p>
             I&apos;m [Name], a psychologist working with adults through individual online counselling.
@@ -171,7 +225,7 @@ export default function Home() {
 
       <section className="focus section" aria-labelledby="focus-title">
         <div className="focus__heading">
-          <div className="section-label">Areas of support</div>
+          <p className="eyebrow">Areas of support</p>
           <h2 id="focus-title">What we can work through together</h2>
           <p>
             People come to counselling for many different reasons. You do not need a diagnosis
@@ -190,8 +244,46 @@ export default function Home() {
       </section>
 
       <section className="statement-band" aria-labelledby="statement-title">
+        <svg
+          className="statement-band__waves"
+          viewBox="0 0 1440 640"
+          preserveAspectRatio="none"
+          fill="none"
+          stroke="currentColor"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <defs>
+            <filter id="statement-wave-distortion" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="2" seed="8" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="32" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+          <g filter="url(#statement-wave-distortion)">
+          <path d="M -80 62 C 122 20 256 150 438 92 S 766 48 948 118 S 1234 42 1520 84" strokeOpacity="0.24" />
+          <path d="M -80 104 C 126 148 294 26 474 117 S 770 178 986 91 S 1270 146 1520 128" strokeOpacity="0.55" />
+          <path d="M -80 150 C 120 70 300 206 506 134 S 814 66 1020 153 S 1320 90 1520 106" strokeOpacity="0.32" />
+          <path d="M -80 176 C 154 224 266 102 482 196 S 780 248 978 168 S 1292 228 1520 178" strokeOpacity="0.7" strokeWidth="1.2" />
+          <path d="M -80 226 C 146 156 320 266 534 211 S 826 138 1042 235 S 1310 178 1520 244" strokeOpacity="0.2" />
+          <path d="M -80 258 C 114 304 290 176 498 274 S 820 314 1018 224 S 1304 312 1520 264" strokeOpacity="0.44" />
+          <path d="M -80 306 C 172 220 312 356 520 291 S 842 236 1062 325 S 1290 260 1520 294" strokeOpacity="0.62" />
+          <path d="M -80 328 C 112 392 322 256 538 350 S 844 412 1040 314 S 1296 390 1520 356" strokeOpacity="0.28" />
+          <path d="M -80 378 C 144 316 296 438 516 374 S 806 300 1020 400 S 1320 334 1520 414" strokeOpacity="0.52" />
+          <path d="M -80 416 C 160 478 328 340 522 436 S 826 492 1058 390 S 1318 454 1520 426" strokeOpacity="0.18" />
+          <path d="M -80 460 C 112 386 302 516 518 448 S 850 374 1056 474 S 1292 422 1520 482" strokeOpacity="0.68" strokeWidth="1.2" />
+          <path d="M -80 492 C 164 544 320 414 514 516 S 800 574 1034 472 S 1316 542 1520 504" strokeOpacity="0.36" />
+          <path d="M -80 540 C 134 470 306 600 528 530 S 826 458 1040 554 S 1328 496 1520 568" strokeOpacity="0.5" />
+          <path d="M -80 572 C 146 618 304 500 512 594 S 812 646 1038 544 S 1300 608 1520 590" strokeOpacity="0.22" />
+          <path d="M 72 242 C 148 178 204 296 288 224 S 402 168 468 254 S 578 222 642 246" strokeOpacity="0.42" />
+          <path d="M 372 108 C 446 164 492 66 580 128 S 690 204 782 118 S 900 98 968 152" strokeOpacity="0.36" />
+          <path d="M 812 284 C 888 224 940 358 1026 274 S 1148 206 1226 302 S 1362 330 1458 260" strokeOpacity="0.48" />
+          <path d="M -40 424 C 56 366 116 492 212 406 S 326 354 406 442 S 536 466 614 406" strokeOpacity="0.3" />
+          <path d="M 582 462 C 668 382 718 514 812 444 S 936 376 1012 466 S 1130 508 1226 434" strokeOpacity="0.4" />
+          <path d="M 1030 176 C 1094 120 1148 242 1236 164 S 1354 108 1468 214" strokeOpacity="0.34" />
+          </g>
+        </svg>
         <div className="statement-band__inner">
-          <div className="section-label section-label--light">A different kind of space</div>
+          <p className="eyebrow eyebrow--light">A different kind of space</p>
           <h2 id="statement-title">
             Understanding yourself doesn&apos;t mean having all the answers. It means learning to ask better questions.
           </h2>
@@ -204,7 +296,14 @@ export default function Home() {
 
       <section className="approach section" id="approach" aria-labelledby="approach-title">
         <div className="approach__heading">
-          <div className="section-label">How I work</div>
+          <div className="approach__aside">
+            <p className="eyebrow">How I work</p>
+            <svg className="approach__mark" viewBox="0 0 176 176" fill="none" aria-hidden="true">
+              <circle cx="62" cy="88" r="58" stroke="currentColor" strokeOpacity="0.45" />
+              <circle cx="114" cy="88" r="58" stroke="currentColor" strokeOpacity="0.72" />
+              <circle cx="88" cy="88" r="3" fill="currentColor" />
+            </svg>
+          </div>
           <h2 id="approach-title">Therapy should feel like a conversation — not an examination.</h2>
           <p>
             There is no universal formula for psychological work. The process develops through
@@ -244,7 +343,7 @@ export default function Home() {
           <div className="sessions__visual-word">present</div>
         </div>
         <div className="sessions__content">
-          <div className="section-label">Online counselling</div>
+          <p className="eyebrow">Online counselling</p>
           <h2 id="sessions-title">A private space, wherever you are.</h2>
           <p>
             Online counselling allows you to speak from a familiar environment while maintaining
@@ -271,7 +370,7 @@ export default function Home() {
 
       <section className="first-session section" aria-labelledby="first-session-title">
         <div className="first-session__heading">
-          <div className="section-label">The first session</div>
+          <p className="eyebrow">The first session</p>
           <h2 id="first-session-title">What happens in the first session?</h2>
         </div>
         <div className="first-session__copy">
@@ -294,7 +393,7 @@ export default function Home() {
 
       <section className="faq section" id="faq" aria-labelledby="faq-title">
         <div className="faq__heading">
-          <div className="section-label">Before we begin</div>
+          <p className="eyebrow">Before we begin</p>
           <h2 id="faq-title">Questions before we begin</h2>
         </div>
         <div className="faq-list">
@@ -325,7 +424,7 @@ export default function Home() {
       </section>
 
       <section className="final-cta section" id="contact" aria-labelledby="contact-title">
-        <div className="section-label">When you&apos;re ready</div>
+        <p className="eyebrow">When you&apos;re ready</p>
         <h2 id="contact-title">We can start with a conversation.</h2>
         <p>
           If you are considering counselling, you can get in touch to arrange an initial session
