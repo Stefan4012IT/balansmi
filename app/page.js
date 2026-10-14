@@ -198,13 +198,9 @@ export default function Home() {
 
       <section className="intro-statement section" id="about" aria-labelledby="intro-title">
         <div className="intro-statement__aside">
-          <p className="eyebrow">About the practice</p>
-          <svg className="intro-statement__pause-mark" viewBox="0 0 176 176" fill="none" aria-hidden="true">
-            <circle cx="88" cy="88" r="86" stroke="currentColor" strokeOpacity="0.28" />
-            <circle cx="88" cy="88" r="58" stroke="currentColor" strokeOpacity="0.48" />
-            <circle cx="88" cy="88" r="30" stroke="currentColor" strokeOpacity="0.72" />
-            <circle cx="88" cy="88" r="3" fill="currentColor" />
-          </svg>
+          <div className="intro-statement__visual">
+            <p className="eyebrow eyebrow--light intro-statement__visual-label">About the practice</p>
+          </div>
         </div>
         <div className="intro-statement__content">
           <h2 id="intro-title">You don&apos;t need to have everything figured out before you start talking.</h2>
@@ -223,12 +219,10 @@ export default function Home() {
       </section>
 
       <section className="about section section--split" aria-labelledby="about-title">
-        <div className="about__visual" role="img" aria-label="A calm, softly lit private counselling space">
-          <div className="about__visual-note">A quiet space<br />to begin.</div>
-          <div className="about__visual-caption">private practice / online</div>
+        <div className="about__visual">
+          <p className="eyebrow about__visual-label">About me</p>
         </div>
         <div className="about__content">
-          <p className="eyebrow">About me</p>
           <h2 id="about-title">A thoughtful, human approach to psychological support.</h2>
           <p>
             I&apos;m [Name], a psychologist working with adults through individual online counselling.
@@ -325,18 +319,15 @@ export default function Home() {
       <section className="approach section" id="approach" aria-labelledby="approach-title">
         <div className="approach__heading">
           <div className="approach__aside">
-            <p className="eyebrow">How I work</p>
-            <svg className="approach__mark" viewBox="0 0 176 176" fill="none" aria-hidden="true">
-              <circle cx="62" cy="88" r="58" stroke="currentColor" strokeOpacity="0.45" />
-              <circle cx="114" cy="88" r="58" stroke="currentColor" strokeOpacity="0.72" />
-              <circle cx="88" cy="88" r="3" fill="currentColor" />
-            </svg>
+            <p className="eyebrow approach__visual-label">How I work</p>
           </div>
-          <h2 id="approach-title">Therapy should feel like a conversation — not an examination.</h2>
-          <p>
-            There is no universal formula for psychological work. The process develops through
-            conversation, curiosity and careful attention to what is happening in your life.
-          </p>
+          <div className="approach__content">
+            <h2 id="approach-title">Therapy should feel like a conversation — not an examination.</h2>
+            <p>
+              There is no universal formula for psychological work. The process develops through
+              conversation, curiosity and careful attention to what is happening in your life.
+            </p>
+          </div>
         </div>
         <div className="stages" id="how-it-works">
           <article className="stage">
@@ -367,11 +358,10 @@ export default function Home() {
       </section>
 
       <section className="sessions section section--split" id="sessions" aria-labelledby="sessions-title">
-        <div className="sessions__visual" aria-hidden="true">
-          <div className="sessions__visual-word">present</div>
+        <div className="sessions__visual">
+          <p className="eyebrow sessions__visual-label">Online counselling</p>
         </div>
         <div className="sessions__content">
-          <p className="eyebrow">Online counselling</p>
           <h2 id="sessions-title">A private space, wherever you are.</h2>
           <p>
             Online counselling allows you to speak from a familiar environment while maintaining

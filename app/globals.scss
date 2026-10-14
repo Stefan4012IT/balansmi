@@ -319,18 +319,48 @@ h2 {
 }
 
 .intro-statement__aside {
-  position: relative;
+  display: flex;
 }
 
-.intro-statement__pause-mark {
+.intro-statement__visual {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(27, 45, 40, 0.25), transparent 45%),
+    url("../public/balansmi_img_01.png") 38% center / cover no-repeat;
+}
+
+.intro-statement__visual::before,
+.intro-statement__visual::after {
+  position: absolute;
+  border: 1px solid rgba(250, 249, 246, 0.6);
+  content: "";
+}
+
+.intro-statement__visual::before {
+  inset: 1.25rem;
+}
+
+.intro-statement__visual::after {
+  right: 2.25rem;
+  bottom: 2.25rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: rgba(250, 249, 246, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.intro-statement__visual-label {
   position: absolute;
   top: 2rem;
-  left: 0;
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: calc(100% - 2rem);
-  color: var(--deep);
+  left: 2rem;
+  z-index: 1;
+  margin: 0;
+  color: var(--surface);
 }
 
 .intro-statement__content {
@@ -375,13 +405,15 @@ h2 {
   padding-bottom: 96px;
 }
 
+.about.section--split {
+  align-items: stretch;
+}
+
 .about__visual {
   position: relative;
-  min-height: 38rem;
+  min-height: 0;
   overflow: hidden;
-  background:
-    linear-gradient(140deg, rgba(42, 77, 77, 0.16), rgba(42, 77, 77, 0.02)),
-    url("../public/hero-background.png") center / cover;
+  background: url("../public/sara_hrustic_001.avif") center 18% / cover no-repeat;
 }
 
 .about__visual::before,
@@ -405,29 +437,12 @@ h2 {
   backdrop-filter: blur(8px);
 }
 
-.about__visual-note {
+.about__visual-label {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 2.5rem;
+  left: 2.5rem;
   z-index: 1;
-  color: var(--surface);
-  font-family: var(--display);
-  font-size: clamp(2.6rem, 5vw, 4.5rem);
-  line-height: 0.9;
-  text-align: center;
-  transform: translate(-50%, -50%);
-}
-
-.about__visual-caption {
-  position: absolute;
-  bottom: 2rem;
-  left: 2rem;
-  z-index: 1;
-  color: var(--surface);
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  margin: 0;
 }
 
 .about__content h2,
@@ -472,7 +487,7 @@ h2 {
 }
 
 .focus__heading > p:not(.eyebrow),
-.approach__heading > p:not(.eyebrow) {
+.approach__content > p {
   max-width: 26rem;
   margin: 0;
   color: var(--muted);
@@ -585,30 +600,48 @@ h2 {
   display: grid;
   grid-template-columns: minmax(12rem, 0.75fr) minmax(0, 1.25fr);
   column-gap: clamp(2rem, 8vw, 8rem);
+  align-items: center;
 }
 
 .approach__aside {
   position: relative;
-  grid-row: span 2;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: url("../public/balansmi_img_003.png") center / cover no-repeat;
 }
 
-.approach__mark {
+.approach__aside::before,
+.approach__aside::after {
   position: absolute;
-  top: 2rem;
-  left: 0;
-  display: block;
-  width: min(100%, 17rem);
-  height: auto;
-  max-height: calc(100% - 2rem);
-  color: var(--deep);
+  border: 1px solid rgba(250, 249, 246, 0.6);
+  content: "";
+}
+
+.approach__aside::before {
+  inset: 1.5rem;
+}
+
+.approach__aside::after {
+  right: 3rem;
+  bottom: 3rem;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: rgba(250, 249, 246, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.approach__visual-label {
+  position: absolute;
+  top: 2.5rem;
+  left: 2.5rem;
+  z-index: 1;
+  margin: 0;
+  color: var(--surface);
 }
 
 .approach__heading h2 {
   max-width: 47rem;
-}
-
-.approach__heading > p:not(.eyebrow) {
-  margin-top: 2rem;
 }
 
 .stages {
@@ -652,32 +685,47 @@ h2 {
   padding-bottom: 96px;
 }
 
-.sessions__visual {
-  position: relative;
-  min-height: 34rem;
-  overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(42, 77, 77, 0.14), rgba(42, 77, 77, 0.45)),
-    url("../public/hero-background.png") 72% center / cover;
+.sessions.section--split {
+  align-items: stretch;
 }
 
-.sessions__visual::before {
+.sessions__visual {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(27, 45, 40, 0.32), transparent 40%),
+    url("../public/balansmi_img_004.png") 40% center / cover no-repeat;
+}
+
+.sessions__visual::before,
+.sessions__visual::after {
   position: absolute;
-  inset: 2rem;
-  border: 1px solid rgba(250, 249, 246, 0.5);
+  border: 1px solid rgba(250, 249, 246, 0.6);
   content: "";
 }
 
-.sessions__visual-word {
+.sessions__visual::before {
+  inset: 1.5rem;
+}
+
+.sessions__visual::after {
+  right: 3rem;
+  bottom: 3rem;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: rgba(250, 249, 246, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.sessions__visual-label {
   position: absolute;
-  right: 2rem;
-  bottom: 2rem;
+  top: 2.5rem;
+  left: 2.5rem;
+  z-index: 1;
+  margin: 0;
   color: var(--surface);
-  font-family: var(--display);
-  font-size: clamp(4rem, 8vw, 8rem);
-  line-height: 0.8;
-  transform: rotate(-90deg) translateX(100%);
-  transform-origin: bottom right;
 }
 
 .session-details {
@@ -1053,8 +1101,9 @@ blockquote {
     gap: 3rem;
   }
 
-  .intro-statement__pause-mark {
-    display: none;
+  .intro-statement__visual {
+    flex: none;
+    aspect-ratio: 3 / 2;
   }
 
   .focus__heading,
@@ -1088,19 +1137,11 @@ blockquote {
 
   .approach__heading {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 2.5rem;
   }
 
   .approach__aside {
-    grid-row: auto;
-  }
-
-  .approach__mark {
-    display: none;
-  }
-
-  .approach__heading > p:not(.eyebrow) {
-    margin-top: 1.5rem;
+    aspect-ratio: 4 / 3;
   }
 }
 
@@ -1182,9 +1223,14 @@ blockquote {
   }
 
   .intro-statement {
-    gap: 0;
+    gap: 2rem;
     padding-top: 48px;
     padding-bottom: 48px;
+  }
+
+  .intro-statement__visual-label {
+    top: 1.75rem;
+    left: 1.75rem;
   }
 
   .about {
@@ -1208,6 +1254,15 @@ blockquote {
   .approach {
     padding-top: 48px;
     padding-bottom: 48px;
+  }
+
+  .approach__heading {
+    gap: 2rem;
+  }
+
+  .approach__visual-label {
+    top: 1.75rem;
+    left: 1.75rem;
   }
 
   .sessions {
