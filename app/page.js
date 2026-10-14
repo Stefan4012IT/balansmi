@@ -68,6 +68,7 @@ const faqs = [
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(true);
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -94,9 +95,36 @@ export default function Home() {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (menuOpen || currentScrollY <= 80) {
+        setHeaderVisible(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      if (Math.abs(currentScrollY - lastScrollY) < 6) return;
+
+      setHeaderVisible(currentScrollY < lastScrollY);
+      lastScrollY = currentScrollY;
+    };
+
+    if (menuOpen) setHeaderVisible(true);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [menuOpen]);
+
   return (
     <main className="site-page">
-      <header className="site-header">
+      <header
+        className={`site-header${headerVisible || menuOpen ? "" : " is-hidden"}`}
+        inert={!headerVisible && !menuOpen}
+      >
         <Link className="brand" href="/" aria-label="Balansmi home" onClick={closeMenu}>
           balansmi
         </Link>

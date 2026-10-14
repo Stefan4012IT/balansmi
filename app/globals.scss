@@ -46,7 +46,7 @@ button:focus-visible {
 }
 
 .site-header {
-  position: absolute;
+  position: fixed;
   top: 1.5rem;
   left: 50%;
   z-index: 10;
@@ -64,8 +64,19 @@ button:focus-visible {
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
   color: var(--surface);
   transform: translateX(-50%);
+  transition: transform 300ms ease;
   backdrop-filter: blur(18px) saturate(0.8);
   -webkit-backdrop-filter: blur(18px) saturate(0.8);
+}
+
+.site-header.is-hidden {
+  transform: translate(-50%, calc(-100% - 2rem));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header {
+    transition: none;
+  }
 }
 
 .brand,
