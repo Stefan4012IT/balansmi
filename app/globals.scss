@@ -156,8 +156,8 @@ button:focus-visible {
   padding: 9rem clamp(2rem, 9vw, 9rem) 5rem;
   isolation: isolate;
   background:
-    linear-gradient(90deg, rgba(243, 240, 233, 0.16), rgba(243, 240, 233, 0.02)),
-    url("../public/balansmi_background_001.png") center / cover no-repeat,
+    linear-gradient(90deg, var(--background) 0%, rgba(243, 240, 233, 0.98) 28%, rgba(243, 240, 233, 0.82) 42%, rgba(243, 240, 233, 0) 62%),
+    url("../public/balansmi_background_003.png") center / cover no-repeat,
     var(--background);
 }
 
@@ -1084,8 +1084,8 @@ blockquote {
     padding-right: 2rem;
     padding-left: 2rem;
     background-image:
-      linear-gradient(180deg, rgba(243, 240, 233, 0.64), rgba(243, 240, 233, 0.08) 72%),
-      url("../public/balansmi_background_mobile_001.png");
+      linear-gradient(180deg, var(--background), rgba(243, 240, 233, 0.92) 30%, rgba(243, 240, 233, 0.18) 78%),
+      url("../public/balansmi_background_mobile_003.png");
     background-position: center top;
   }
 
@@ -1175,8 +1175,9 @@ blockquote {
     align-items: flex-start;
     padding: 8rem 1.5rem 3rem;
     background-image:
-      linear-gradient(180deg, rgba(243, 240, 233, 0.9), rgba(243, 240, 233, 0.78) 48%, rgba(243, 240, 233, 0) 82%),
-      url("../public/balansmi_background_mobile_001.png");
+      linear-gradient(180deg, var(--background), rgba(243, 240, 233, 0.98) 42%, rgba(243, 240, 233, 0) 76%),
+      url("../public/balansmi_background_mobile_003.png");
+    background-position: center top, center 5rem;
   }
 
   .hero h1 {
