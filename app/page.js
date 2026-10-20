@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const navigationItems = [
   { label: "About", href: "#about" },
   { label: "Approach", href: "#approach" },
   { label: "Sessions", href: "#sessions" },
   { label: "FAQ", href: "#faq" },
-  { label: "Book a session", href: "#contact", cta: true },
+  { label: "Book a session", href: "#contact-form", cta: true },
 ];
 
 const focusAreas = [
@@ -35,6 +35,34 @@ const focusAreas = [
   {
     title: "Feeling Stuck",
     text: "Sometimes there is no obvious crisis — only the sense that something in life is no longer working.",
+  },
+];
+
+const testimonials = [
+  {
+    perspective: "Client perspective",
+    quote: "I expected to have to explain everything at once. We started with one thing I could name, and went from there.",
+    type: "client",
+  },
+  {
+    perspective: "Mentor perspective",
+    quote: "She listens closely and asks the question that moves a conversation forward, without rushing to tidy it up.",
+    type: "mentor",
+  },
+  {
+    perspective: "Client perspective",
+    quote: "Some weeks I had a lot to say. Other weeks I didn't. I appreciated that neither felt like a problem.",
+    type: "client",
+  },
+  {
+    perspective: "Collaborator perspective",
+    quote: "In our work together, she was careful with nuance and direct when it mattered. I valued that combination.",
+    type: "mentor",
+  },
+  {
+    perspective: "Client perspective",
+    quote: "I didn't leave with a list of fixes. I left knowing a little more clearly what I wanted to pay attention to.",
+    type: "client",
   },
 ];
 
@@ -69,8 +97,47 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
+  const [contactStatus, setContactStatus] = useState("");
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [testimonialsPaused, setTestimonialsPaused] = useState(false);
+  const testimonialsTrackRef = useRef(null);
+  const testimonialPauseRef = useRef({ hovered: false, focused: false });
 
   const closeMenu = () => setMenuOpen(false);
+
+  const handleContactSubmit = (event) => {
+    event.preventDefault();
+    setContactStatus("The request form is not connected yet. Please try again later.");
+  };
+
+  const moveTestimonials = (direction) => {
+    const track = testimonialsTrackRef.current;
+    const cards = track?.children;
+    if (!cards?.length) return;
+
+    const step = cards[1].offsetLeft - cards[0].offsetLeft;
+    const lastStart = Math.round((track.scrollWidth - track.clientWidth) / step);
+    const next = activeTestimonial + direction;
+    const target = next > lastStart ? 0 : next < 0 ? lastStart : next;
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    track.scrollTo({ left: cards[target].offsetLeft, behavior });
+  };
+
+  const handleTestimonialsScroll = () => {
+    const track = testimonialsTrackRef.current;
+    const cards = track?.children;
+    if (!cards || cards.length < 2) return;
+
+    const step = cards[1].offsetLeft - cards[0].offsetLeft;
+    setActiveTestimonial(Math.round(track.scrollLeft / step));
+  };
+
+  const setTestimonialPause = (reason, paused) => {
+    testimonialPauseRef.current[reason] = paused;
+    setTestimonialsPaused(
+      testimonialPauseRef.current.hovered || testimonialPauseRef.current.focused
+    );
+  };
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -113,11 +180,36 @@ export default function Home() {
       lastScrollY = currentScrollY;
     };
 
-    if (menuOpen) setHeaderVisible(true);
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (testimonialsPaused) return;
+
+    const timer = window.setInterval(() => {
+      if (
+        testimonialPauseRef.current.hovered ||
+        testimonialPauseRef.current.focused ||
+        document.hidden ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) return;
+
+      const track = testimonialsTrackRef.current;
+      const cards = track?.children;
+      if (!cards || cards.length < 2) return;
+      const bounds = track.getBoundingClientRect();
+      if (bounds.bottom < 0 || bounds.top > window.innerHeight) return;
+
+      const step = cards[1].offsetLeft - cards[0].offsetLeft;
+      const lastStart = Math.round((track.scrollWidth - track.clientWidth) / step);
+      const next = activeTestimonial >= lastStart ? 0 : activeTestimonial + 1;
+      track.scrollTo({ left: cards[next].offsetLeft, behavior: "smooth" });
+    }, 7000);
+
+    return () => window.clearInterval(timer);
+  }, [activeTestimonial, testimonialsPaused]);
 
   return (
     <main className="site-page">
@@ -177,11 +269,10 @@ export default function Home() {
             <span>Time to understand.</span>
           </h1>
           <p className="hero__intro">
-            Professional online psychological counselling in a private, thoughtful
-            space — wherever you feel most comfortable.
+            Professional online psychological counselling, wherever you feel most comfortable.
           </p>
           <div className="hero__actions">
-            <a className="button button--primary" href="#contact">
+            <a className="button button--primary" href="#contact-form">
               Book a session <span aria-hidden="true">→</span>
             </a>
             <a className="button button--secondary" href="#how-it-works">
@@ -192,7 +283,7 @@ export default function Home() {
         </div>
         <div className="hero__aside" aria-hidden="true">
           <span>quietly held</span>
-          <span>space to begin</span>
+          <span>at your own pace</span>
         </div>
       </section>
 
@@ -210,7 +301,7 @@ export default function Home() {
               simply a sense that something feels difficult, repetitive or out of balance.
             </p>
             <p>
-              Psychological counselling creates space to slow down, understand what is
+              Psychological counselling lets you slow down, understand what is
               happening beneath the surface, and explore new ways of relating to yourself,
               your experiences and the people around you.
             </p>
@@ -305,13 +396,12 @@ export default function Home() {
           </g>
         </svg>
         <div className="statement-band__inner">
-          <p className="eyebrow eyebrow--light">A different kind of space</p>
+          <p className="eyebrow eyebrow--light">A different way to begin</p>
           <h2 id="statement-title">
             Understanding yourself doesn&apos;t mean having all the answers. It means learning to ask better questions.
           </h2>
           <p>
-            Counselling offers a protected space to explore those questions without pressure
-            to immediately solve them.
+            Counselling gives those questions time, without expecting an immediate answer.
           </p>
         </div>
       </section>
@@ -362,7 +452,7 @@ export default function Home() {
           <p className="eyebrow sessions__visual-label">Online counselling</p>
         </div>
         <div className="sessions__content">
-          <h2 id="sessions-title">A private space, wherever you are.</h2>
+          <h2 id="sessions-title">Private conversations, wherever you are.</h2>
           <p>
             Online counselling allows you to speak from a familiar environment while maintaining
             the structure and privacy of a professional psychological session.
@@ -373,7 +463,7 @@ export default function Home() {
             <div><dt>Duration</dt><dd>Approximately 50 minutes</dd></div>
             <div><dt>Language</dt><dd>[Languages]</dd></div>
             <div><dt>Availability</dt><dd>[Days / time zone]</dd></div>
-            <div><dt>Price</dt><dd>[Session price]</dd></div>
+            <div><dt>First session</dt><dd>Free</dd></div>
           </dl>
         </div>
       </section>
@@ -384,6 +474,23 @@ export default function Home() {
           You may be facing something specific, or you may simply want to understand yourself
           more clearly. Both are enough places to start.
         </p>
+      </section>
+
+      <section className="first-session-cta" aria-labelledby="first-session-cta-title">
+        <div className="first-session-cta__inner">
+          <div className="first-session-cta__content">
+            <p className="eyebrow eyebrow--light">A gentle first step</p>
+            <h2 id="first-session-cta-title">Your first session is <em>free.</em></h2>
+            <p>
+              A chance to meet, talk about what brings you here, and see whether this feels
+              like the right fit for you.
+            </p>
+            <a className="button button--light" href="#contact-form">
+              Book your free session <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <div className="first-session-cta__mark" aria-hidden="true"><span>01</span></div>
+        </div>
       </section>
 
       <section className="first-session section" aria-labelledby="first-session-title">
@@ -406,6 +513,61 @@ export default function Home() {
           </p>
           <p>There is no obligation to arrive prepared or to know exactly what you want to say.</p>
           <blockquote>You don&apos;t need to prepare for therapy. You only need to arrive.</blockquote>
+        </div>
+      </section>
+
+      <section className="testimonials" aria-labelledby="testimonials-title">
+        <div className="testimonials__inner">
+          <div className="testimonials__heading">
+            <p className="eyebrow">Different perspectives</p>
+            <h2 id="testimonials-title">The space we create together.</h2>
+          </div>
+          <div
+            className="testimonials__carousel"
+            onMouseEnter={() => setTestimonialPause("hovered", true)}
+            onMouseLeave={() => setTestimonialPause("hovered", false)}
+            onFocusCapture={() => setTestimonialPause("focused", true)}
+            onBlurCapture={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) {
+                setTestimonialPause("focused", false);
+              }
+            }}
+          >
+            <div
+              className="testimonials__track"
+              ref={testimonialsTrackRef}
+              role="region"
+              aria-roledescription="carousel"
+              aria-label="Sample perspectives"
+              tabIndex={0}
+              onScroll={handleTestimonialsScroll}
+            >
+              {testimonials.map((testimonial, index) => (
+                <figure
+                  className={`testimonial-card testimonial-card--${testimonial.type}`}
+                  key={testimonial.quote}
+                >
+                  <span className="testimonial-card__number" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
+                  </span>
+                  <blockquote>“{testimonial.quote}”</blockquote>
+                  <figcaption>{testimonial.perspective}</figcaption>
+                </figure>
+              ))}
+            </div>
+            <div className="testimonials__controls">
+              <div className="testimonials__meta">
+                <span className="testimonials__count">
+                  {String(activeTestimonial + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
+                </span>
+                <span className="testimonials__disclosure">Sample quotes, not actual testimonials</span>
+              </div>
+              <div className="testimonials__arrows">
+                <button type="button" aria-label="Previous testimonial" onClick={() => moveTestimonials(-1)}>←</button>
+                <button type="button" aria-label="Next testimonial" onClick={() => moveTestimonials(1)}>→</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -442,15 +604,42 @@ export default function Home() {
       </section>
 
       <section className="final-cta section" id="contact" aria-labelledby="contact-title">
-        <p className="eyebrow">When you&apos;re ready</p>
-        <h2 id="contact-title">We can start with a conversation.</h2>
-        <p>
-          If you are considering counselling, you can get in touch to arrange an initial session
-          or ask any questions about the process.
-        </p>
-        <div className="final-cta__actions">
-          <a className="button button--primary" href="mailto:[email]">Book a session <span aria-hidden="true">→</span></a>
-          <a className="button button--secondary" href="mailto:[email]">Get in touch</a>
+        <div className="final-cta__inner">
+          <div className="final-cta__intro">
+            <p className="eyebrow">When you&apos;re ready</p>
+            <h2 id="contact-title">We can start with a conversation.</h2>
+            <p>
+              Tell me how to reach you, and we can arrange your free first session.
+            </p>
+            <p>
+              You don&apos;t need to explain everything here. Your name and email are enough to
+              take the first step; you can share more whenever you feel ready.
+            </p>
+          </div>
+          <form className="contact-form" id="contact-form" onSubmit={handleContactSubmit}>
+            <div className="contact-form__field">
+              <label htmlFor="contact-name">Full name</label>
+              <input id="contact-name" name="name" type="text" autoComplete="name" required />
+            </div>
+            <div className="contact-form__row">
+              <div className="contact-form__field">
+                <label htmlFor="contact-email">Email</label>
+                <input id="contact-email" name="email" type="email" autoComplete="email" required />
+              </div>
+              <div className="contact-form__field">
+                <label htmlFor="contact-phone">Phone <span>(optional)</span></label>
+                <input id="contact-phone" name="phone" type="tel" autoComplete="tel" />
+              </div>
+            </div>
+            <div className="contact-form__field">
+              <label htmlFor="contact-message">Message <span>(optional)</span></label>
+              <textarea id="contact-message" name="message" rows="5" />
+            </div>
+            <button className="button button--primary" type="submit">
+              Send request <span aria-hidden="true">→</span>
+            </button>
+            {contactStatus && <p className="contact-form__status" role="status">{contactStatus}</p>}
+          </form>
         </div>
       </section>
 
@@ -458,7 +647,7 @@ export default function Home() {
         <div className="site-footer__main">
           <div>
             <Link className="footer-brand" href="/">balansmi</Link>
-            <p>A quiet space for honest conversation.</p>
+            <p>A quieter way to begin.</p>
           </div>
           <div className="footer-links">
             <div>
@@ -470,8 +659,8 @@ export default function Home() {
             </div>
             <div>
               <span className="footer-label">Contact</span>
-              <a href="#contact">Book a session</a>
-              <a href="mailto:[email]">[email]</a>
+              <a href="#contact-form">Book a session</a>
+              <a href="#contact-form">Send a request</a>
               <span>[Location / time zone]</span>
             </div>
             <div>
